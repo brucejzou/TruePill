@@ -1,0 +1,29 @@
+import flask
+from flask import request, jsonify
+from bias import Bias, get_bias
+from suggestions import get_suggested_articles
+from config import Config
+
+app = flask.Flask(__name__)
+app.config.from_object(Config)
+
+@app.route('/api/truepill/', methods=['POST'])
+def process_url():
+    if not request.json or not 'article_url' in request.json:
+        abort(400)
+
+    article_url = request.json['article_url']
+    num_suggestions = request.json.get('number_suggestions', app.config['NUM_SUGGESTIONS'])
+    bias = get_bias(article_url, None)
+    suggested_articles = get_suggested_articles(article_url, num_suggestions)
+
+    response = {
+        'article_url': article_url,
+        'bias': bias,
+        'suggested_articles': suggested_articles
+    }
+
+    return jsonify(response), 200
+
+if __name__ == '__main__':
+    app.run()
