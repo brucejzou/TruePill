@@ -2,9 +2,9 @@ from enum import Enum
 
 class Bias(Enum):
     LEFT = 1
-    LEAN_LEFT = 2
+    LEFT_CENTER = 2
     CENTER = 3
-    LEAN_RIGHT = 4
+    RIGHT_CENTER = 4
     RIGHT = 5
     MIXED = 6
 
@@ -29,7 +29,7 @@ def get_base_url(article_url):
     
     Example:
     Input: https://www.cnn.com/2021/02/06/us/ben-montgomery-shot-moonlight-book-trnd/index.html
-    Output: www.cnn.com
+    Output: https://www.cnn.com/
 
     """
     pass

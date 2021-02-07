@@ -6,7 +6,6 @@ class Config(object):
     # True Pill Configs
     TRUSTED_SOURCES = []
     NUM_SUGGESTIONS = 4
-    MEDIA_BIAS_SOURCE = "https://mediabiasfactcheck.com"
     BIAS_DB_PATH = 'something'
 
 class ProdConfig(Config):
