@@ -1,0 +1,25 @@
+{
+  "name": "True Pill",
+  "description": "This is our hack-a-thing for True Pill.",
+  "version": "0.1",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_title": "Open the popup"
+  },
+  "web_accessible_resources":["app/popup.html"],
+  "icons": {
+    "16": "logo-small.png",
+    "48": "logo-small.png",
+    "128": "logo-small.png"
+  },
+  "background": {
+    "scripts": ["app/background.js"]
+  },
+  "content_security_policy": "script-src 'self' 'sha256-FG8zi7STkge9lwv9cS3ghTuCsHvQm+2fo4t9CV6JYtY='; object-src 'self'",
+  "permissions": [
+    "webRequest",
+    "https://www.facebook.com/*",
+    "https://do2ewch6z8.execute-api.us-east-2.amazonaws.com/default/hello-world-python"
+  ]
+}
