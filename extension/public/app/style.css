@@ -1,0 +1,15 @@
+body {
+  background-color: lightblue;
+}
+
+.title {
+  color: maroon;
+  text-align: center;
+  font-weight: bold;
+  font-size: medium;
+}
+
+.body {
+  color: black;
+  font-size: small;
+}
