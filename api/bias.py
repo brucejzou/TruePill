@@ -1,4 +1,5 @@
 from enum import Enum
+from urllib.parse import urlparse
 
 class Bias(Enum):
     LEFT = 1
@@ -32,4 +33,7 @@ def get_base_url(article_url):
     Output: www.cnn.com
 
     """
-    pass
+    u = urlparse(article_url)
+    return u[0] + "://" + u[1]
+    
+
