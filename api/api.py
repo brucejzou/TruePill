@@ -3,9 +3,11 @@ from flask import request, jsonify
 from bias import Bias, get_bias
 from suggestions import get_suggested_articles
 from config import Config
+from tinydb import TinyDB
 
 app = flask.Flask(__name__)
 app.config.from_object(Config)
+app.config['MEDIA_BIAS_DB'] = TinyDB(app.config['BIAS_DB_PATH'])
 
 @app.route('/api/truepill/', methods=['POST'])
 def process_url():
@@ -14,7 +16,7 @@ def process_url():
 
     article_url = request.json['article_url']
     num_suggestions = request.json.get('number_suggestions', app.config['NUM_SUGGESTIONS'])
-    bias = get_bias(article_url, None)
+    bias = get_bias(article_url, app.config['MEDIA_BIAS_DB'])
     suggested_articles = get_suggested_articles(article_url, num_suggestions)
 
     response = {

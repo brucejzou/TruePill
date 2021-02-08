@@ -1,5 +1,7 @@
-from enum import Enum
 import urllib.parse
+import tldextract
+from enum import Enum
+from tinydb import Query
 
 class Bias(Enum):
     LEFT = 1
@@ -7,7 +9,7 @@ class Bias(Enum):
     CENTER = 3
     RIGHT_CENTER = 4
     RIGHT = 5
-    MIXED = 6
+    UNKNOWN = 6
 
 def get_bias(article_url, bias_db):
     """
@@ -16,12 +18,19 @@ def get_bias(article_url, bias_db):
     Arguments
     ----------
     article_url: (string), the url of the article.
-    bias_db: (pickleDB), media bias pickleDB database.
+    bias_db: (tinydb), media bias tinyDB database.
     """
 
     base_url = get_base_url(article_url)
+    domain_name = tldextract.extract(base_url).domain
+    
+    Media = Query()
+    query_results = bias_db.search( (Media.url == base_url) | (Media.domain_name == domain_name)) # domain_name backup lookup
+    if query_results:
+        first_res = query_results[0]
+        return first_res['bias']
 
-    return Bias.LEFT.name
+    return Bias.UNKNOWN.name
 
 
 def get_base_url(article_url):
@@ -34,7 +43,7 @@ def get_base_url(article_url):
 
     """
     u = urllib.parse.urlparse(article_url)
-    return u[0] + "://" + u[1]
+    return u[0] + "://" + u[1] + '/'
     
 def extract_fb_url(fb_url):
     """

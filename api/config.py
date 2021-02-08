@@ -6,7 +6,7 @@ class Config(object):
     # True Pill Configs
     TRUSTED_SOURCES = []
     NUM_SUGGESTIONS = 4
-    BIAS_DB_PATH = 'something'
+    BIAS_DB_PATH = 'media_bias_db.json'
 
 class ProdConfig(Config):
     DEBUG = False

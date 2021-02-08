@@ -19,3 +19,6 @@ PS C:\path\to\app> flask run
 If `flask run` doesn't work, an alternative is `python -m flask run`.
 
 The server will run locally at http://127.0.0.1:5000/
+
+## Creating Media Bias database
+Run `python create_bias_db.py` to create a tinyDB database at `'media_bias_db.json'`.
