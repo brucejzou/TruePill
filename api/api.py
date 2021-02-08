@@ -2,6 +2,7 @@ import flask
 from flask import request, jsonify
 from bias import Bias, get_bias
 from suggestions import get_suggested_articles
+from url_helpers import is_facebook_url, extract_fb_url
 from config import Config
 from tinydb import TinyDB
 
@@ -16,6 +17,8 @@ def process_url():
 
     article_url = request.json['article_url']
     num_suggestions = request.json.get('number_suggestions', app.config['NUM_SUGGESTIONS'])
+    if is_facebook_url(article_url):
+        article_url = extract_fb_url(article_url)
     bias = get_bias(article_url, app.config['MEDIA_BIAS_DB'])
     suggested_articles = get_suggested_articles(article_url, num_suggestions)
 
