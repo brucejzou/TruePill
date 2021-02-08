@@ -13,7 +13,7 @@ $ flask run
 
 ### Windows PowerShell
 ```
-PS C:\path\to\app> $env:FLASK_APP = "hello.py"
+PS C:\path\to\app> $env:FLASK_APP = "api.py"
 PS C:\path\to\app> flask run
 ```
 If `flask run` doesn't work, an alternative is `python -m flask run`.
