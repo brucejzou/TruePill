@@ -16,6 +16,15 @@
   "background": {
     "scripts": ["app/background.js"]
   },
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/*"],
+      "css": ["app/core.css"],
+      "js": ["app/core.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
   "content_security_policy": "script-src 'self' 'sha256-FG8zi7STkge9lwv9cS3ghTuCsHvQm+2fo4t9CV6JYtY='; object-src 'self'",
   "permissions": [
     "webRequest",
