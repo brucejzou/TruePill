@@ -20,12 +20,12 @@ function getName(name) {
                     return;
                 }
 
-                response.json().then(function(data) {
-                    console.log("data.name: " + data.name);
-                    alert("Welcome to " + data.name);
-                    return;
-                  }
-                );
+                // response.json().then(function(data) {
+                //     console.log("data.name: " + data.name);
+                //     alert("Welcome to " + data.name);
+                //     return;
+                //   }
+                // );
             }
         )
         .catch(function(err) {
@@ -66,16 +66,16 @@ function getName(name) {
       const request = tabStorage[tabId].requests[requestId];
       var re = new RegExp("https://www.facebook.com/$")
       console.log(details.url)
-      if (re.test(details.url)) {
-          getName("True Pill");
-          chrome.windows.create({
-            'url': chrome.extension.getURL("app/popup.html"),
-            'height': 200,
-            'width': 200,
-            'type': "popup",
-            'focused': true
-          });
-      }
+    //   if (re.test(details.url)) {
+    //       getName("True Pill");
+    //       chrome.windows.create({
+    //         'url': chrome.extension.getURL("app/popup.html"),
+    //         'height': 200,
+    //         'width': 200,
+    //         'type': "popup",
+    //         'focused': true
+    //       });
+    //   }
 
       Object.assign(request, {
           endTime: details.timeStamp,

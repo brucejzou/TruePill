@@ -2,7 +2,7 @@ import urllib.parse
 import tldextract
 from enum import Enum
 from tinydb import Query
-from url_helpers import get_base_url
+from .url_helpers import get_base_url
 
 class Bias(Enum):
     LEFT = 1
@@ -24,7 +24,7 @@ def get_bias(article_url, bias_db):
 
     base_url = get_base_url(article_url)
     domain_name = tldextract.extract(base_url).domain
-    
+
     Media = Query()
     query_results = bias_db.search( (Media.url == base_url) | (Media.domain_name == domain_name)) # domain_name backup lookup
     if query_results:
