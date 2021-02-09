@@ -4,25 +4,35 @@ document.addEventListener('mousemove', function (e) {
   while (srcElement != null && srcElement.getAttribute("data-pagelet") != 'FeedUnit_1') {
     if (srcElement.nodeName == 'A') {
       var url = srcElement.getAttribute("href");
-      if (url != null) {
-        alert(url);
-        console.log(url);
+      if (url != null && url.substring(0,25).valueOf() != "https://www.facebook.com/".valueOf()) {
+        //alert(url);
+        //console.log(url);
+        console.log(url.substring(0,25));
         let data = {article_url : url};
-        fetch('http://localhost:5000/api/truepill/', {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          //mode: 'no-cors',
-          method: "POST",
-          body: JSON.stringify(data)
-        }).then(res => {
-          console.log("Request complete! response:", res);
+        getBias('http://localhost:5000/api/truepill/', data)
+        .then(data => {
+          console.log("Request complete! response:", data);
+          if (data.bias !== undefined) {
+            alert("The bias of this article is " + data.bias);
+            console.log(data.article_url);
+          }
         });
+        break;
       }
     }
     srcElement = srcElement.parentNode;
     //console.log(srcElement);
   }
-  console.log(srcElement)
 }, false);
+
+function getBias(url, data) {
+  return fetch(url, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    //mode: 'no-cors',
+    method: "POST",
+    body: JSON.stringify(data)
+  }).then(res => res.json());
+}
