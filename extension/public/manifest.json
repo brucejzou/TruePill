@@ -29,7 +29,6 @@
     "webRequest",
     "https://www.facebook.com/*",
     "https://do2ewch6z8.execute-api.us-east-2.amazonaws.com/default/hello-world-python",
-    "http://localhost:5000/",
-    "https://api.com/"
+    "http://localhost:5000/"
   ]
 }
