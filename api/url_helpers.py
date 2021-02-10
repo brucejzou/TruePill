@@ -1,5 +1,6 @@
 import urllib.parse
 import tldextract
+import requests
 
 def get_base_url(article_url):
     """
@@ -10,7 +11,8 @@ def get_base_url(article_url):
     Output: https://www.cnn.com/
 
     """
-    u = urllib.parse.urlparse(article_url)
+    r = requests.get(article_url)
+    u = urllib.parse.urlparse(r.url)
     return u[0] + "://" + u[1] + '/'
 
 def is_facebook_url(url):
@@ -26,5 +28,5 @@ def extract_fb_url(fb_url):
     Output: https://www.reuters.com/news/picture/thai-shelter-for-disabled-stray-dogs-thr-idUSRTX8XTG1/1550403886?fbclid=IwAR0Fd61ZalJYMVS8Cbq6KUgePJ937WGHxmRMQU59kNG4AxYzEc4fJ1t-ws8&h=AT1MPSv84XaEV7uPMPwsnZ3AGE08Iz2UYdsTAVnd7v7aMC56WgCvnMuaVMVK4CxKePDN0RD7zwakpEFLYmeEsFM9S8_SuK3NsoFaDZQ61f3wtCNVwUBIAniqA8CJ20Uqb79B&__tn__=H-R&c[0]=AT0XhQ85FG3-3DpjwxheOyqDtDPDqzDW0CeEkdc1xZyiCgywoRCMZrnPFVhOhhgPpk4rg8IgPhbqV7clzcaoHmJ5TshCqxOoK9wzglMwUPcR_jSGI3ivJQmVElNj8XEfh4XKvwtDDx3CwD736f_CFcvxB8WbkkTbcKQaSrETNYCf0LvCWgvn_vTJ
 
     """
-    fb_url = fb_url[fb_url.index('l.php?u=') + 8: len(fb_url)]; 
+    fb_url = fb_url[fb_url.index('l.php?u=') + 8: len(fb_url)]
     return urllib.parse.unquote(fb_url)

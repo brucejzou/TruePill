@@ -16,10 +16,18 @@
   "background": {
     "scripts": ["app/background.js"]
   },
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/*"],
+      "js": ["app/core.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
   "content_security_policy": "script-src 'self' 'sha256-FG8zi7STkge9lwv9cS3ghTuCsHvQm+2fo4t9CV6JYtY='; object-src 'self'",
   "permissions": [
     "webRequest",
     "https://www.facebook.com/*",
-    "https://do2ewch6z8.execute-api.us-east-2.amazonaws.com/default/hello-world-python"
+    "http://localhost:5000/*"
   ]
 }
