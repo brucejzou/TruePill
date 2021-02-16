@@ -43,12 +43,12 @@ var observer = new MutationObserver(function(mutations) {
   console.log(posts)
   posts.forEach(post => {
     var menu = post.querySelector('[aria-haspopup="menu"]');
-    if ( menu.parentElement.parentElement.children.length <= 3 ) {
+    if ( menu.parentElement.parentElement.childNodes.length <= 3 ) {
       console.log(menu.parentElement.parentElement.childNodes.length);
 
       var elem = document.createElement("img");
       elem.src = chrome.extension.getURL("logo-small.png");
-      menu.parentElement.parentElement.parentElement.appendChild(elem); 
+      menu.parentElement.parentElement.appendChild(elem); 
 
     }
     
