@@ -36,12 +36,24 @@
 //     body: JSON.stringify(data)
 //   }).then(res => res.json());
 // }
+var feed = document.querySelector('[role="feed"]');
 
-var feed = document.querySelectorAll('[data-pagelet^="FeedUnit_"]');
-console.log(feed)
-feed.forEach(post => {
-  var elem = document.createElement("img");
-  elem.src = chrome.extension.getURL("logo-small.png")
-  post.querySelector('[aria-haspopup="menu"]').parentElement.parentElement.appendChild(elem); 
-  console.log(post);
+var observer = new MutationObserver(function(mutations) {
+  var posts = document.querySelectorAll('[data-pagelet^="FeedUnit_"]');
+  console.log(posts)
+  posts.forEach(post => {
+    var menu = post.querySelector('[aria-haspopup="menu"]');
+    if ( menu.parentElement.parentElement.children.length <= 3 ) {
+      console.log(menu.parentElement.parentElement.childNodes.length);
+
+      var elem = document.createElement("img");
+      elem.src = chrome.extension.getURL("logo-small.png");
+      menu.parentElement.parentElement.parentElement.appendChild(elem); 
+
+    }
+    
+  });
+  
 });
+var config = { attributes: true, childList: true, characterData: true };
+observer.observe(feed, config);
