@@ -12,7 +12,7 @@
     "*.png"
   ],
   "icons": {
-    "16": "logo-small.png",
+    "16": "assets/True Pill - UI Icon.png",
     "48": "logo-small.png",
     "128": "logo-small.png"
   },
