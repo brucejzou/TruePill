@@ -23,7 +23,7 @@ def process_url():
     if is_facebook_url(article_url):
         article_url = extract_fb_url(article_url)
     bias = get_bias(article_url, app.config['MEDIA_BIAS_DB'])
-    suggested_articles = get_suggested_articles(article_url, num_suggestions)
+    suggested_articles = get_suggested_articles(article_url, num_suggestions, app.config['TRUSTED_SOURCES'])
 
     response = {
         'article_url': article_url,
