@@ -38,6 +38,7 @@ var observer = new MutationObserver(function(mutations) {
 
       var elem = document.createElement("img");
       elem.src = chrome.extension.getURL("assets/True Pill - UI Icon.png");
+      elem.style.paddingTop = "12px";
       elem.setAttribute("class", "true_img");
       menu.parentElement.parentElement.appendChild(elem); 
       elem.onclick = function() { getBias('http://localhost:5000/api/truepill/', post); }
