@@ -25,7 +25,7 @@ Returns a list of ranked keywords for the given article text.
 	
 ## Suggested Articles
 ### Suggested Articles Function
-Returns list of suggested ``Articles``  with their respective news source, bias, and URL. The suggested articles are all published from news sources from the list of ``trusted_sources``  and are determined based on the input article's keywords using [NewsAPI](https://newsapi.org/).
+Returns list of suggested ``Articles``  with their respective news source, bias, and URL. The suggested articles are all published from news sources from the list of ``trusted_sources``  and are determined based on the input article's keywords.
 
 **Inputs:**
 
