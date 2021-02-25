@@ -25,7 +25,32 @@
 //   }
 // }, false);
 
+var feed2 = document.querySelector('[role="main"]');
+var observer2 = new MutationObserver(function(mutations) {
+  var feed = document.querySelectorAll('[role="main"]');
+  console.log(feed);
+  var posts2 = Array.prototype.slice.call(feed);
+  console.log("side pages", posts2);
+  if (feed.length == 2) {
+    var innerhtml = feed.item(1).childNodes.item(0);
+    console.log(innerhtml);
+    innerhtml.childNodes.forEach((post) => {
+      var menu = post.querySelector('[aria-haspopup="menu"]');
+      if ( menu.parentElement.parentElement.querySelector('[class="true_img"]') == null ) {
+  
+        var elem = document.createElement("img");
+        elem.src = chrome.extension.getURL("assets/True Pill - UI Icon.png");
+        elem.style.paddingTop = "12px";
+        elem.setAttribute("class", "true_img");
+        menu.parentElement.parentElement.appendChild(elem); 
+        elem.onclick = function() { getBias('http://localhost:5000/api/truepill/', post); }  
+      }
 
+    });
+  }
+});
+var config = { attributes: true, childList: true, characterData: true };
+observer2.observe(feed2, config);
 
 var feed = document.querySelector('[role="feed"]');
 
