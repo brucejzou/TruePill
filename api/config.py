@@ -7,7 +7,7 @@ class Config(object):
     TRUSTED_SOURCES = []
     NUM_SUGGESTIONS = 4
     BIAS_DB_PATH = 'media_bias_db.json'
-    TOP_N_KEYWORDS = 3
+    TOP_N_KEYWORDS = 5
     DATE_MARGIN = 7
 
 class ProdConfig(Config):

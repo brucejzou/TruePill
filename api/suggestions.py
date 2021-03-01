@@ -1,12 +1,23 @@
 import random
+import requests
+import datefinder
+import articleDateExtractor
+import string
 from bias import Bias, get_bias
 from news_search import google_news_search
-from rake_nltk import Rake
+from rake_nltk import Metric, Rake
 from bs4 import BeautifulSoup
 from bs4.element import Comment
-import requests
 
 TEXT_LENGTH_FILTER = 80
+HTML_BLACKLIST = [
+    'style', 
+    'script', 
+    'head', 
+    'title', 
+    'meta', 
+    '[document]'
+]
 
 def get_suggested_articles(article_url, num_suggestions, app_config):
     """
@@ -22,7 +33,8 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     top_n_keywords = app_config['TOP_N_KEYWORDS']
     date_margin = app_config['DATE_MARGIN']
 
-    article_text, article_date = get_article_text(article_url)
+    article_text = get_article_text(article_url)
+    article_date = articleDateExtractor.extractArticlePublishedDate(article_url)
     article_keywords = get_article_keywords(article_text)
     related_articles = get_related_articles(article_keywords, article_date, num_suggestions, trusted_sources, top_n_keywords, date_margin, app_config['MEDIA_BIAS_DB'])
 
@@ -36,10 +48,13 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     return suggested_articles 
 
 def tag_visible(element):
-    if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+    if element.parent.name in HTML_BLACKLIST:
         return False
     if isinstance(element, Comment):
         return False
+    return True
+
+def tag_length_filter(element):
     if len(str(element)) < TEXT_LENGTH_FILTER:
         return False
     return True
@@ -59,7 +74,11 @@ def get_article_text(article_url):
         soup = BeautifulSoup(content, features='html.parser')
         texts = soup.find_all(text=True)
         visible_texts = filter(tag_visible, texts)
-        return u" ".join(t.strip() for t in visible_texts)
+        visible_texts_long = filter(tag_length_filter, visible_texts)
+        article_text = ' '.join(t.strip() for t in visible_texts_long)
+        article_text = ''.join(filter(lambda x: x in string.printable, article_text)) # remove weird characters like the fancy quotes
+        article_text = article_text.translate(str.maketrans('', '', string.punctuation)) # remove punctuation
+        return article_text
 
 def get_article_keywords(article_text):
     """
@@ -70,7 +89,7 @@ def get_article_keywords(article_text):
     article_text: (string), string containing the text of the article.
     """
 
-    r = Rake()
+    r = Rake(ranking_metric=Metric.WORD_FREQUENCY, min_length=1, max_length=4)
     r.extract_keywords_from_text(article_text)
 
     return r.get_ranked_phrases()
@@ -99,4 +118,3 @@ def get_related_articles(article_keywords, article_date, num_suggestions, truste
     related_articles = google_news_search(selected_keywords, article_date, num_suggestions, chosen_sources, date_margin, bias_db)
 
     return related_articles
-
