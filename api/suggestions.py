@@ -1,6 +1,12 @@
 import random
 from bias import Bias, get_bias
 from news_search import google_news_search
+from rake_nltk import Rake
+from bs4 import BeautifulSoup
+from bs4.element import Comment
+import requests
+
+TEXT_LENGTH_FILTER = 80
 
 def get_suggested_articles(article_url, num_suggestions, app_config):
     """
@@ -29,6 +35,14 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
 
     return suggested_articles 
 
+def tag_visible(element):
+    if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+        return False
+    if isinstance(element, Comment):
+        return False
+    if len(str(element)) < TEXT_LENGTH_FILTER:
+        return False
+    return True
 
 def get_article_text(article_url):
     """
@@ -38,9 +52,14 @@ def get_article_text(article_url):
     ----------
     article_url: (string), the url of the original article.
     """
+    result = requests.get(article_url)
 
-    return ""
-
+    if result.status_code == 200:
+        content = result.content
+        soup = BeautifulSoup(content, features='html.parser')
+        texts = soup.find_all(text=True)
+        visible_texts = filter(tag_visible, texts)
+        return u" ".join(t.strip() for t in visible_texts)
 
 def get_article_keywords(article_text):
     """
@@ -51,7 +70,10 @@ def get_article_keywords(article_text):
     article_text: (string), string containing the text of the article.
     """
 
-    return []
+    r = Rake()
+    r.extract_keywords_from_text(article_text)
+
+    return r.get_ranked_phrases()
 
 def get_related_articles(article_keywords, article_date, num_suggestions, trusted_sources, top_n_keywords, date_margin, bias_db):
     """
