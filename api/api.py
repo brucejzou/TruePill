@@ -1,9 +1,9 @@
 import flask
 from flask import request, jsonify, abort
-from .bias import Bias, get_bias
-from .suggestions import get_suggested_articles
-from .url_helpers import is_facebook_url, extract_fb_url
-from .config import Config
+from bias import Bias, get_bias
+from suggestions import get_suggested_articles
+from url_helpers import is_facebook_url, extract_fb_url
+from config import Config
 from tinydb import TinyDB
 from flask_cors import CORS
 
@@ -23,7 +23,7 @@ def process_url():
     if is_facebook_url(article_url):
         article_url = extract_fb_url(article_url)
     bias = get_bias(article_url, app.config['MEDIA_BIAS_DB'])
-    suggested_articles = get_suggested_articles(article_url, num_suggestions)
+    suggested_articles = get_suggested_articles(article_url, num_suggestions, app.config)
 
     response = {
         'article_url': article_url,
