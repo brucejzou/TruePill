@@ -59,17 +59,24 @@
 //   }).then(res => res.json());
 // }
 
-
-
 var overlays = [];
-var feed = document.querySelector('[role="feed"]');
 
 var observer = new MutationObserver(function(mutations) {
   var posts = document.querySelectorAll('[data-pagelet^="FeedUnit_"]');
+  if (posts.length == 0) {
+    console.log("big booty bitches");
+    var overall = document.querySelectorAll('[class="k4urcfbm"]');
+    while (overall.length < 3) {
+      window.setTimeout(null,50);
+      overall = document.querySelectorAll('[class="k4urcfbm"]');
+    }
+    posts = overall[f.length - 1].childNodes;
+  }
   console.log(posts)
   posts.forEach(post => {
     var menu = post.querySelector('[aria-haspopup="menu"]');
-    if ( menu.parentElement.parentElement.querySelector('[class="true_img"]') == null ) {
+    console.log(menu);
+    if (menu == null || menu.parentElement == null || menu.parentElement.parentElement.querySelector('[class="true_img"]') == null ) {
       var elem = document.createElement("img");
       elem.src = chrome.extension.getURL("assets/True Pill - UI Icon.png");
       elem.style.paddingTop = "12px";
@@ -113,8 +120,23 @@ var observer = new MutationObserver(function(mutations) {
   });
 });
 
-var config = { attributes: true, childList: true, characterData: true };
-observer.observe(feed, config);
+function addObserverIfDesiredNodeAvailable() {
+  var feed = document.querySelector('[role="feed"]');
+  if (!feed){
+    f = document.querySelectorAll('[class="k4urcfbm"]');
+    feed = f[f.length - 1];
+    if(f.length < 3) {
+      console.log("timeout");
+      window.setTimeout(addObserverIfDesiredNodeAvailable,50);
+      return;
+    }
+  }
+  console.log("found feed", feed);
+  var config = { attributes: true, childList: true, characterData: true };
+  observer.observe(feed, config);
+}
+
+addObserverIfDesiredNodeAvailable();
 
 function getBias(serv_url, post) {
   var fb_url = null;
