@@ -51,7 +51,7 @@
 // observer2.observe(feed2, config);
 
 var observer = new MutationObserver(function(mutations) {
-  // var posts = document.querySelectorAll('[data-pagelet^="FeedUnit_"]');
+  var posts = document.querySelectorAll('[data-pagelet^="FeedUnit_"]');
   window.setTimeout(null,500);
   var posts = document.querySelectorAll('[role="article"]');
   while (!posts){
@@ -79,8 +79,10 @@ var observer = new MutationObserver(function(mutations) {
 function addObserverIfDesiredNodeAvailable() {
   var feed = document.querySelector('[role="feed"]');
   if (!feed){
-    feed = document.querySelector('[data-pagelet="page"]');
-    if(!feed) {
+    console.log('Not role=feed')
+    f = document.querySelectorAll('[class="k4urcfbm"]');
+    feed = f[f.length - 1];
+    if(f.length < 3) {
       //The node we need does not exist yet.
       //Wait 50ms and try again
       console.log("timeout");
