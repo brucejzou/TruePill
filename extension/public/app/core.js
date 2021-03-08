@@ -90,8 +90,8 @@ var observer = new MutationObserver(function(mutations) {
             alert("The bias of this article is " + data.bias);
             console.log(data.article_url);
             var div = document.createElement("div");
-            div.style.width = "130px";
-            div.style.height = "80px";
+            div.style.width = "360px";
+            div.style.height = "260px";
             div.style.background = "rgba(256, 256, 256, 1)";
             div.style.padding = "15px";
             div.style.borderRadius = "25px";
@@ -99,17 +99,23 @@ var observer = new MutationObserver(function(mutations) {
             div.style.textAlign = "center";
             div.style.position = "absolute";
             var rect = elem.getBoundingClientRect();
-            div.style.left = rect.left + window.scrollX - 65 + 'px';
+            div.style.left = rect.left + window.scrollX - 180 + 'px';
             div.style.top = rect.top + window.scrollY + 30 + 'px';
             div.style.z = 100;
             var bias = document.createElement("div");
             var suggested = document.createElement("div");
             var divider = document.createElement("hr");
             bias.innerHTML = "The bias of this article is " + data.bias;
-            suggested.innerHTML = "Here are some suggested articles...";
             div.appendChild(bias);
-            div.appendChild(divider);
-            div.appendChild(suggested);
+            if (data.suggested_articles !== undefined) {
+              suggested.innerHTML = "Here are some suggested articles...\n";
+              for (var i = 0; i < data.suggested_articles.length; i++) {
+                suggested.innerHTML += "<div>Bias rating: " +  data.suggested_articles[i].bias + "</div>";
+                suggested.innerHTML += "<a href =\"" + data.suggested_articles[i].article_url + "\">" + data.suggested_articles[i].article_url + "</a>";
+              }
+              div.appendChild(divider);
+              div.appendChild(suggested);
+            }
             document.body.appendChild(div);
             overlays.push(div);
           }
