@@ -110,20 +110,8 @@ var observer = new MutationObserver(function(mutations) {
               div.style.left = rect.left + window.scrollX - 180 + 'px';
               div.style.top = rect.top + window.scrollY + 30 + 'px';
               div.style.z = 100;
-              // var left = document.createElement("div");
-              // var right = document.createElement("div");
-              // left.style.backgroundColor = "yellow";
-              // left.style.width = "12%";
-              // right.style.backgroundColor = "blue";
-              // right.style.width = "50%";
-              var bias = document.createElement("p");
-              //var bar = document.createElement("img");
-              //bar.src = chrome.extension.getURL("assets/bar.png");
-              // var scale = document.createElement("img");
-              // scale.src = chrome.extension.getURL("assets/scale.png");
-              // scale.style.maxWidth = "100%";
-              // scale.style.maxHeight = "100%";
-              // left.appendChild(scale);
+              // var bar = document.createElement("img");
+              // bar.src = chrome.extension.getURL("assets/bar.png");
               var fontcolor = "gray";
               if (data.bias == "LEFT" || data.bias == "LEFT_CENTER") {
                 fontcolor = "blue";
@@ -134,17 +122,28 @@ var observer = new MutationObserver(function(mutations) {
               if (data.bias == "CENTER") {
                 fontcolor = "purple";
               }
-              // var header = document.createElement("div");
-              // header.style.flexDirection = "row";
-              // header.style.justifyContent = "flex-start";
-              // header.style.alignItems = "center";
-              // header.style.backgroundColor = "red";
-              // header.appendChild(left);
+              var bias = document.createElement("p");
               bias.innerHTML = "<b>Bias:</b> " + data.bias.fontcolor(fontcolor).replace("_", " ");
-              // right.appendChild(bias);
+              //div.appendChild(bias);
+              var header = document.createElement("div");
+              header.style.display = "flex";
+              header.style.flexDirection = "row";
+              header.style.justifyContent = "flex-start";
+              header.style.alignItems = "center";
+              var left = document.createElement("div");
+              var scale = document.createElement("img");
+              scale.src = chrome.extension.getURL("assets/scale.png");
+              scale.style.maxWidth = "100%";
+              scale.style.maxHeight = "100%";
+              left.appendChild(scale);
+              var right = document.createElement("div");
+              left.style.width = "12%";
+              right.style.width = "50%";
+              right.appendChild(bias);
               //right.appendChild(bar);
-              // header.appendChild(right);
-              div.appendChild(bias);
+              header.appendChild(left);
+              header.appendChild(right);
+              div.appendChild(header);
               if (data.suggested_articles !== undefined) {
                 // var articles = document.createElement("img");
                 // articles.style.maxWidth = "30%";
