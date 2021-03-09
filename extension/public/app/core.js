@@ -80,98 +80,104 @@ var observer = new MutationObserver(function(mutations) {
     if (menu == null || menu.parentElement == null || menu.parentElement.parentElement.querySelector('[class="true_img"]') == null ) {
       var elem = document.createElement("img");
       elem.src = chrome.extension.getURL("assets/True Pill - UI Icon Small.png");
-      elem.style.paddingTop = "12px";
+      elem.style.paddingTop = "7px";
       elem.style.maxWidth = "4%";
       elem.style.maxHeight = "4%";
       elem.setAttribute("class", "true_img");
       menu.parentElement.parentElement.appendChild(elem);
       elem.addEventListener("click", function(e) {
-        getBias('http://localhost:5000/api/truepill/', post)
-        .then(data => {
-          console.log("Request complete! response:", data);
-          if (data.bias !== undefined) {
-            //alert("The bias of this article is " + data.bias);
-            console.log(data.article_url);
-            var div = document.createElement("div");
-            div.style.width = "360px";
-            div.style.height = height + "px";
-            div.style.background = "rgba(256, 256, 256, 1)";
-            div.style.padding = "15px";
-            div.style.borderRadius = "25px";
-            div.style.boxShadow = "2px 2px 10px rgba(0, 0, 0, 0.2)";
-            div.style.textAlign = "center";
-            div.style.position = "absolute";
-            var rect = elem.getBoundingClientRect();
-            div.style.left = rect.left + window.scrollX - 180 + 'px';
-            div.style.top = rect.top + window.scrollY + 30 + 'px';
-            div.style.z = 100;
-            // var left = document.createElement("div");
-            // var right = document.createElement("div");
-            // left.style.backgroundColor = "yellow";
-            // left.style.width = "12%";
-            // right.style.backgroundColor = "blue";
-            // right.style.width = "50%";
-            var bias = document.createElement("p");
-            //var bar = document.createElement("img");
-            //bar.src = chrome.extension.getURL("assets/bar.png");
-            // var scale = document.createElement("img");
-            // scale.src = chrome.extension.getURL("assets/scale.png");
-            // scale.style.maxWidth = "100%";
-            // scale.style.maxHeight = "100%";
-            // left.appendChild(scale);
-            var fontcolor = "gray";
-            if (data.bias == "LEFT" || data.bias == "LEFT_CENTER") {
-              fontcolor = "blue";
-            }
-            if (data.bias == "RIGHT" || data.bias == "RIGHT_CENTER") {
-              fontcolor = "red";
-            }
-            if (data.bias == "CENTER") {
-              fontcolor = "purple";
-            }
-            // var header = document.createElement("div");
-            // header.style.flexDirection = "row";
-            // header.style.justifyContent = "flex-start";
-            // header.style.alignItems = "center";
-            // header.style.backgroundColor = "red";
-            // header.appendChild(left);
-            bias.innerHTML = "<b>Bias:</b> " + data.bias.fontcolor(fontcolor).replace("_", " ");
-            // right.appendChild(bias);
-            //right.appendChild(bar);
-            // header.appendChild(right);
-            div.appendChild(bias);
-            if (data.suggested_articles !== undefined) {
-              // var articles = document.createElement("img");
-              // articles.style.maxWidth = "30%";
-              // articles.style.maxHeight = "30%";
-              div.style.height = height + 20 + 60 * data.suggested_articles.length + "px";
-              var suggested = document.createElement("div");
-              var divider = document.createElement("hr");
-              // suggested.appendChild(articles);
-              suggested.innerHTML += "<p><b>Related Articles: </b> Similar articles from various news sources.</p>";
-              for (var i = 0; i < data.suggested_articles.length; i++) {
-                var article = document.createElement("div");
-                fontcolor = "gray";
-                if (data.suggested_articles[i].bias == "LEFT" || data.suggested_articles[i].bias == "LEFT_CENTER") {
-                  fontcolor = "blue";
-                }
-                if (data.suggested_articles[i].bias == "RIGHT" || data.suggested_articles[i].bias == "RIGHT_CENTER") {
-                  fontcolor = "red";
-                }
-                if (data.suggested_articles[i].bias == "CENTER") {
-                  fontcolor = "purple";
-                }
-                article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + "</b></a></p>";
-                article.innerHTML += "<p>Bias rating: " +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
-                suggested.appendChild(article);
+        if (overlays.length != 0) {
+          document.body.removeChild(overlays[0]);
+          overlays = [];
+        }
+        else {
+          getBias('http://localhost:5000/api/truepill/', post)
+          .then(data => {
+            console.log("Request complete! response:", data);
+            if (data.bias !== undefined) {
+              //alert("The bias of this article is " + data.bias);
+              console.log(data.article_url);
+              var div = document.createElement("div");
+              div.style.width = "360px";
+              div.style.height = height + "px";
+              div.style.background = "rgba(256, 256, 256, 1)";
+              div.style.padding = "15px";
+              div.style.borderRadius = "25px";
+              div.style.boxShadow = "2px 2px 10px rgba(0, 0, 0, 0.2)";
+              div.style.textAlign = "center";
+              div.style.position = "absolute";
+              var rect = elem.getBoundingClientRect();
+              div.style.left = rect.left + window.scrollX - 180 + 'px';
+              div.style.top = rect.top + window.scrollY + 30 + 'px';
+              div.style.z = 100;
+              // var left = document.createElement("div");
+              // var right = document.createElement("div");
+              // left.style.backgroundColor = "yellow";
+              // left.style.width = "12%";
+              // right.style.backgroundColor = "blue";
+              // right.style.width = "50%";
+              var bias = document.createElement("p");
+              //var bar = document.createElement("img");
+              //bar.src = chrome.extension.getURL("assets/bar.png");
+              // var scale = document.createElement("img");
+              // scale.src = chrome.extension.getURL("assets/scale.png");
+              // scale.style.maxWidth = "100%";
+              // scale.style.maxHeight = "100%";
+              // left.appendChild(scale);
+              var fontcolor = "gray";
+              if (data.bias == "LEFT" || data.bias == "LEFT_CENTER") {
+                fontcolor = "blue";
               }
-              div.appendChild(divider);
-              div.appendChild(suggested);
+              if (data.bias == "RIGHT" || data.bias == "RIGHT_CENTER") {
+                fontcolor = "red";
+              }
+              if (data.bias == "CENTER") {
+                fontcolor = "purple";
+              }
+              // var header = document.createElement("div");
+              // header.style.flexDirection = "row";
+              // header.style.justifyContent = "flex-start";
+              // header.style.alignItems = "center";
+              // header.style.backgroundColor = "red";
+              // header.appendChild(left);
+              bias.innerHTML = "<b>Bias:</b> " + data.bias.fontcolor(fontcolor).replace("_", " ");
+              // right.appendChild(bias);
+              //right.appendChild(bar);
+              // header.appendChild(right);
+              div.appendChild(bias);
+              if (data.suggested_articles !== undefined) {
+                // var articles = document.createElement("img");
+                // articles.style.maxWidth = "30%";
+                // articles.style.maxHeight = "30%";
+                div.style.height = height + 20 + 60 * data.suggested_articles.length + "px";
+                var suggested = document.createElement("div");
+                var divider = document.createElement("hr");
+                // suggested.appendChild(articles);
+                suggested.innerHTML += "<p><b>Related Articles: </b> Similar articles from various news sources.</p>";
+                for (var i = 0; i < data.suggested_articles.length; i++) {
+                  var article = document.createElement("div");
+                  fontcolor = "gray";
+                  if (data.suggested_articles[i].bias == "LEFT" || data.suggested_articles[i].bias == "LEFT_CENTER") {
+                    fontcolor = "blue";
+                  }
+                  if (data.suggested_articles[i].bias == "RIGHT" || data.suggested_articles[i].bias == "RIGHT_CENTER") {
+                    fontcolor = "red";
+                  }
+                  if (data.suggested_articles[i].bias == "CENTER") {
+                    fontcolor = "purple";
+                  }
+                  article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + "</b></a></p>";
+                  article.innerHTML += "<p>Bias rating: " +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
+                  suggested.appendChild(article);
+                }
+                div.appendChild(divider);
+                div.appendChild(suggested);
+              }
+              document.body.appendChild(div);
+              overlays.push(div);
             }
-            document.body.appendChild(div);
-            overlays.push(div);
-          }
-        });
+          });
+        }
       }, false);
       //elem.onclick = function() { getBias('http://localhost:5000/api/truepill/', post); }
     }
