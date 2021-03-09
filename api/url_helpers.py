@@ -1,6 +1,6 @@
 import urllib.parse
 import tldextract
-import requests
+from make_requests import make_request
 
 def get_base_url(article_url):
     """
@@ -11,7 +11,7 @@ def get_base_url(article_url):
     Output: https://www.cnn.com/
 
     """
-    r = requests.get(article_url)
+    r = make_request(article_url)
     u = urllib.parse.urlparse(r.url)
     return u[0] + "://" + u[1] + '/'
 
