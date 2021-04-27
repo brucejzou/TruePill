@@ -9,6 +9,7 @@ class Config(object):
     BIAS_DB_PATH = 'media_bias_db.json'
     TOP_N_KEYWORDS = 3
     DATE_MARGIN = 7
+    URL_MATCH_THRESHOLD = 0.5
 
 class ProdConfig(Config):
     DEBUG = False

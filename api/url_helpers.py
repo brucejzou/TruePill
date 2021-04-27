@@ -1,6 +1,7 @@
 import urllib.parse
 import tldextract
 from make_requests import make_request
+import re
 
 def get_base_url(article_url):
     """
@@ -30,3 +31,14 @@ def extract_fb_url(fb_url):
     """
     fb_url = fb_url[fb_url.index('l.php?u=') + 8: len(fb_url)]
     return urllib.parse.unquote(fb_url)
+
+def get_url_words(url):
+    u = urllib.parse.urlparse(url)
+    if len(u.path) <= 1: # is '' or '/'
+        return None # No text
+    
+    # get last part of path (usually where the article specific text is)
+    last_path = u.path.split('/')[-1]
+    url_words = re.sub('[^0-9a-zA-Z]+', ' ', last_path) # remove non alphanum characters
+    url_words = [w for w in url_words.split(' ') if len(w)>1] # remove 1 character words/artifacts
+    return url_words
