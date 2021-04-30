@@ -68,7 +68,7 @@ def create_query_str(keywords, sources):
     for source in sources:
         str_builder.append('inurl:' + source)
         str_builder.append('OR')
-    if str_builder[-1] == 'OR':
+    if len(str_builder) > 0  and str_builder[-1] == 'OR':
         del str_builder[-1]
     
     return ' '.join(str_builder)
