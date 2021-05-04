@@ -65,6 +65,8 @@ def get_google_cache_url(original_url):
 
 def url_words_match_text(article_url, article_text, threshold):
     url_words = get_url_words(article_url)
+    if len(url_words) == 0:
+        return True
     count = 0
     for word in url_words:
         if word in article_text:
