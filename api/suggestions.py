@@ -54,8 +54,8 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     # add biases
     suggested_articles = []
     for article in related_articles:
-        bias = get_bias(article, app_config['MEDIA_BIAS_DB'])
-        suggestion = {'bias': bias, 'article_url': article}
+        bias = get_bias(article[1], app_config['MEDIA_BIAS_DB'])
+        suggestion = {'bias': bias, 'article_url': article[1], 'article_title': article[0]}
         suggested_articles.append(suggestion)
 
     return suggested_articles 
