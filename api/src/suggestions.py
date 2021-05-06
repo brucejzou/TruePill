@@ -2,16 +2,16 @@ import random
 import datefinder
 import articleDateExtractor
 import string
-from bias import Bias, get_bias
-from news_search import google_news_search
-from make_requests import make_request, get_random_header
+from src.bias import Bias, get_bias
+from src.news_search import google_news_search
+from src.make_requests import make_request, get_random_header
+from src.url_helpers import get_url_words
 from goose3 import Goose
 from cleantext import clean
 from dateutil import parser
 from rake_nltk import Metric, Rake
 from bs4 import BeautifulSoup
 from bs4.element import Comment
-from url_helpers import get_url_words
 
 # TEXT_LENGTH_FILTER = 80
 # HTML_BLACKLIST = [

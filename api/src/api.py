@@ -1,8 +1,8 @@
 import flask
 from flask import request, jsonify, abort
-from bias import Bias, get_bias
-from suggestions import get_suggested_articles
-from url_helpers import is_facebook_url, extract_fb_url
+from src.bias import Bias, get_bias
+from src.suggestions import get_suggested_articles
+from src.url_helpers import is_facebook_url, extract_fb_url
 from config import Config
 from tinydb import TinyDB
 from flask_cors import CORS

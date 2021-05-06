@@ -1,6 +1,6 @@
 import urllib.parse
 import tldextract
-from make_requests import make_request
+from src.make_requests import make_request
 import re
 
 def get_base_url(article_url):

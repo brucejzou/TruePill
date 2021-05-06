@@ -86,3 +86,6 @@ def get_date_range(date, margin):
     start_date = date - time_delta
     end_date = date + time_delta
     return start_date.strftime(DATE_FORMAT), end_date.strftime(DATE_FORMAT)
+
+def dummy_func():
+    print("dummy thicc")
