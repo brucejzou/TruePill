@@ -11,6 +11,7 @@ from dateutil import parser
 from rake_nltk import Metric, Rake
 from bs4 import BeautifulSoup
 from bs4.element import Comment
+from url_helpers import get_url_words
 
 # TEXT_LENGTH_FILTER = 80
 # HTML_BLACKLIST = [
@@ -21,6 +22,7 @@ from bs4.element import Comment
 #     'meta',
 #     '[document]'
 # ]
+GOOGLE_CACHE_BASE_URL = "https://webcache.googleusercontent.com/search?q=cache:"
 
 def get_suggested_articles(article_url, num_suggestions, app_config):
     """
@@ -35,8 +37,15 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     trusted_sources = app_config['TRUSTED_SOURCES']
     top_n_keywords = app_config['TOP_N_KEYWORDS']
     date_margin = app_config['DATE_MARGIN']
+    url_match_threshold = app_config['URL_MATCH_THRESHOLD']
 
     article_text, article_date, article_url = get_article_text_and_date(article_url)
+    
+    if not url_words_match_text(article_url, article_text, url_match_threshold): 
+        gc_article_text, gc_article_date, gc_article_url = get_article_text_and_date(get_google_cache_url(article_url))
+        if "error 404" not in gc_article_text.lower():
+            article_text, article_date, article_url = gc_article_text, gc_article_date, gc_article_url
+
     # article_text = get_article_text(article_url)
     # article_date = articleDateExtractor.extractArticlePublishedDate(article_url)
     article_keywords = get_article_keywords(article_text)
@@ -45,18 +54,31 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     # add biases
     suggested_articles = []
     for article in related_articles:
-        bias = get_bias(article, app_config['MEDIA_BIAS_DB'])
-        suggestion = {'bias': bias, 'article_url': article}
+        bias = get_bias(article[1], app_config['MEDIA_BIAS_DB'])
+        suggestion = {'bias': bias, 'article_url': article[1], 'article_title': article[0]}
         suggested_articles.append(suggestion)
 
     return suggested_articles
+
+def get_google_cache_url(original_url):
+    return GOOGLE_CACHE_BASE_URL + original_url
+
+def url_words_match_text(article_url, article_text, threshold):
+    url_words = get_url_words(article_url)
+    if len(url_words) == 0:
+        return True
+    count = 0
+    for word in url_words:
+        if word in article_text:
+            count += 1
+    return count / len(url_words) >= threshold
 
 def get_article_text_and_date(article_url):
     g = Goose({'http_headers': get_random_header()})
     article = g.extract(url=article_url)
     title = article.title
     body = clean(article.cleaned_text, no_line_breaks=True, no_punct=True)
-    date = parser.parse(article.publish_date)
+    date = parser.parse(article.publish_date) if article.publish_date else None
     text = clean(title, no_punct=True) + body
 
     return text, date, article.canonical_link
