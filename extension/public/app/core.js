@@ -175,13 +175,14 @@ var observer = new MutationObserver(function(mutations) {
               footerleft.appendChild(articles);
               footer.appendChild(footerleft);
 
-              div.style.height = height + 60 + 55 * data.suggested_articles.length + "px";
+              div.style.height = height + 60 + 75 * data.suggested_articles.length + "px";
               var divider = document.createElement("hr");
 
               footerright.innerHTML += "<p style=\"font-size:20px\"><b>Related Articles </b></p>";
               footerright.innerHTML += "<p>Similar articles from various news sources.".fontcolor("gray")+"</p><br><br>";
               for (var i = 0; i < data.suggested_articles.length; i++) {
                 var article = document.createElement("div");
+                article.style.lineHeight = "100%";
                 fontcolor = "gray";
                 if (data.suggested_articles[i].bias == "LEFT" || data.suggested_articles[i].bias == "LEFT_CENTER") {
                   fontcolor = "blue";
@@ -192,8 +193,8 @@ var observer = new MutationObserver(function(mutations) {
                 if (data.suggested_articles[i].bias == "CENTER") {
                   fontcolor = "purple";
                 }
-                article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + ":</b></a></p>";
-                article.innerHTML += "<p>"+ "Bias rating: ".fontcolor("gray") +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p><br><br>";
+                article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + ": </b>" + data.suggested_articles[i].article_title + "</a></p>";
+                article.innerHTML += "<p>"+ "Bias rating: ".fontcolor("gray") +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
                 footerright.appendChild(article);
               }
               footer.appendChild(footerright);
