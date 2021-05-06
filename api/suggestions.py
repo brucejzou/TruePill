@@ -14,11 +14,11 @@ from bs4.element import Comment
 
 # TEXT_LENGTH_FILTER = 80
 # HTML_BLACKLIST = [
-#     'style', 
-#     'script', 
-#     'head', 
-#     'title', 
-#     'meta', 
+#     'style',
+#     'script',
+#     'head',
+#     'title',
+#     'meta',
 #     '[document]'
 # ]
 
@@ -49,7 +49,7 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
         suggestion = {'bias': bias, 'article_url': article}
         suggested_articles.append(suggestion)
 
-    return suggested_articles 
+    return suggested_articles
 
 def get_article_text_and_date(article_url):
     g = Goose({'http_headers': get_random_header()})

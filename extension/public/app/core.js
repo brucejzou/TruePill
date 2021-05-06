@@ -90,7 +90,6 @@ var observer = new MutationObserver(function(mutations) {
         .then(data => {
           console.log("Request complete! response:", data);
           if (data.bias !== undefined) {
-            //alert("The bias of this article is " + data.bias);
             console.log(data.article_url);
             var div = document.createElement("div");
             div.style.width = "360px";
@@ -105,20 +104,30 @@ var observer = new MutationObserver(function(mutations) {
             div.style.left = rect.left + window.scrollX - 180 + 'px';
             div.style.top = rect.top + window.scrollY + 30 + 'px';
             div.style.z = 100;
-            // var left = document.createElement("div");
-            // var right = document.createElement("div");
-            // left.style.backgroundColor = "yellow";
-            // left.style.width = "12%";
-            // right.style.backgroundColor = "blue";
-            // right.style.width = "50%";
-            var bias = document.createElement("p");
-            //var bar = document.createElement("img");
-            //bar.src = chrome.extension.getURL("assets/bar.png");
-            // var scale = document.createElement("img");
-            // scale.src = chrome.extension.getURL("assets/scale.png");
-            // scale.style.maxWidth = "100%";
-            // scale.style.maxHeight = "100%";
-            // left.appendChild(scale);
+
+            var header = document.createElement("div");
+            header.style.display = "flex";
+            header.style.flexDirection = "row";
+            header.style.justifyContent = "flex-start";
+            header.style.alignItems = "flex-start";
+
+            var headerleft = document.createElement("div");
+            var headerright = document.createElement("div");
+            headerleft.style.width = "12%";
+            headerleft.style.marginTop = "10px";
+
+            headerright.style.width = "80%";
+            headerright.style.marginLeft = "10px";
+            headerright.style.textAlign = "left";
+            headerright.style.lineHeight = "30%";
+
+            var scale = document.createElement("img");
+            scale.src = chrome.extension.getURL("assets/scale.png");
+            scale.style.maxWidth = "100%";
+            scale.style.maxHeight = "100%";
+            headerleft.appendChild(scale);
+            header.appendChild(headerleft);
+
             var fontcolor = "gray";
             if (data.bias == "LEFT" || data.bias == "LEFT_CENTER") {
               fontcolor = "blue";
@@ -129,26 +138,48 @@ var observer = new MutationObserver(function(mutations) {
             if (data.bias == "CENTER") {
               fontcolor = "purple";
             }
-            // var header = document.createElement("div");
-            // header.style.flexDirection = "row";
-            // header.style.justifyContent = "flex-start";
-            // header.style.alignItems = "center";
-            // header.style.backgroundColor = "red";
-            // header.appendChild(left);
-            bias.innerHTML = "<b>Bias:</b> " + data.bias.fontcolor(fontcolor).replace("_", " ");
-            // right.appendChild(bias);
-            //right.appendChild(bar);
-            // header.appendChild(right);
-            div.appendChild(bias);
+            var bias = document.createElement("div");
+            bias.style.textAlign = "left";
+            bias.innerHTML += "<p style=\"font-size:20px\"><b>Bias Rating: </b>"+ data.bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
+            headerright.appendChild(bias);
+            var bar = document.createElement("img");
+            bar.src = chrome.extension.getURL("assets/bar.png");
+            headerright.appendChild(bar);
+            header.appendChild(headerright);
+            div.appendChild(header);
+
+            var footer = document.createElement("div");
+            footer.style.display = "flex";
+            footer.style.flexDirection = "row";
+            footer.style.justifyContent = "flex-start";
+            footer.style.alignItems = "flex-start";
+
+            var footerleft = document.createElement("div");
+            var footerright = document.createElement("div");
+            footerleft.style.width = "12%";
+            footerleft.style.marginTop = "10px";
+
+            footerright.style.width = "80%";
+            footerright.style.marginLeft = "10px";
+            footerright.style.textAlign = "left";
+            footerright.style.lineHeight = "30%";
+
+            scale.style.maxWidth = "100%";
+            scale.style.maxHeight = "100%";
+
             if (data.suggested_articles !== undefined) {
-              // var articles = document.createElement("img");
-              // articles.style.maxWidth = "30%";
-              // articles.style.maxHeight = "30%";
-              div.style.height = height + 20 + 60 * data.suggested_articles.length + "px";
-              var suggested = document.createElement("div");
+              var articles = document.createElement("img");
+              articles.src = chrome.extension.getURL("assets/application.png");
+              articles.style.maxWidth = "100%";
+              articles.style.maxHeight = "100%";
+              footerleft.appendChild(articles);
+              footer.appendChild(footerleft);
+
+              div.style.height = height + 60 + 55 * data.suggested_articles.length + "px";
               var divider = document.createElement("hr");
-              // suggested.appendChild(articles);
-              suggested.innerHTML += "<p><b>Related Articles: </b> Similar articles from various news sources.</p>";
+
+              footerright.innerHTML += "<p style=\"font-size:20px\"><b>Related Articles </b></p>";
+              footerright.innerHTML += "<p>Similar articles from various news sources.".fontcolor("gray")+"</p><br><br>";
               for (var i = 0; i < data.suggested_articles.length; i++) {
                 var article = document.createElement("div");
                 fontcolor = "gray";
@@ -161,12 +192,13 @@ var observer = new MutationObserver(function(mutations) {
                 if (data.suggested_articles[i].bias == "CENTER") {
                   fontcolor = "purple";
                 }
-                article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + "</b></a></p>";
-                article.innerHTML += "<p>Bias rating: " +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
-                suggested.appendChild(article);
+                article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + ":</b></a></p>";
+                article.innerHTML += "<p>"+ "Bias rating: ".fontcolor("gray") +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p><br><br>";
+                footerright.appendChild(article);
               }
+              footer.appendChild(footerright);
               div.appendChild(divider);
-              div.appendChild(suggested);
+              div.appendChild(footer);
             }
             document.body.appendChild(div);
             overlays.push(div);
