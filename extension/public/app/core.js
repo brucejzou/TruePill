@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-undef */
 // var current_url;
 // var overlays = [];
 //
@@ -59,7 +61,6 @@
 //   }).then(res => res.json());
 // }
 
-
 var overlays = [];
 var height = 60;
 var observer = new MutationObserver(function(mutations) {
@@ -86,14 +87,16 @@ var observer = new MutationObserver(function(mutations) {
       elem.setAttribute("class", "true_img");
       menu.parentElement.parentElement.appendChild(elem);
       elem.addEventListener("click", function(e) {
-        getBias('http://localhost:5000/api/truepill/', post)
+        getBias('http://localhost:5000/api/truepill/', post, 0)
         .then(data => {
           console.log("Request complete! response:", data);
           if (data.bias !== undefined) {
             //alert("The bias of this article is " + data.bias);
             console.log(data.article_url);
             var div = document.createElement("div");
+            div.id = (data.article_url)
             div.style.width = "360px";
+            div.style.alignItems = "center";
             div.style.height = height + "px";
             div.style.background = "rgba(256, 256, 256, 1)";
             div.style.padding = "15px";
@@ -140,36 +143,69 @@ var observer = new MutationObserver(function(mutations) {
             //right.appendChild(bar);
             // header.appendChild(right);
             div.appendChild(bias);
-            if (data.suggested_articles !== undefined) {
-              // var articles = document.createElement("img");
-              // articles.style.maxWidth = "30%";
-              // articles.style.maxHeight = "30%";
-              div.style.height = height + 20 + 60 * data.suggested_articles.length + "px";
-              var suggested = document.createElement("div");
-              var divider = document.createElement("hr");
-              // suggested.appendChild(articles);
-              suggested.innerHTML += "<p><b>Related Articles: </b> Similar articles from various news sources.</p>";
-              for (var i = 0; i < data.suggested_articles.length; i++) {
-                var article = document.createElement("div");
-                fontcolor = "gray";
-                if (data.suggested_articles[i].bias == "LEFT" || data.suggested_articles[i].bias == "LEFT_CENTER") {
-                  fontcolor = "blue";
-                }
-                if (data.suggested_articles[i].bias == "RIGHT" || data.suggested_articles[i].bias == "RIGHT_CENTER") {
-                  fontcolor = "red";
-                }
-                if (data.suggested_articles[i].bias == "CENTER") {
-                  fontcolor = "purple";
-                }
-                article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + "</b></a></p>";
-                article.innerHTML += "<p>Bias rating: " +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
-                suggested.appendChild(article);
-              }
-              div.appendChild(divider);
-              div.appendChild(suggested);
-            }
+            var loader = document.createElement("div");
+            var divider = document.createElement("hr");
+            loader.id = data.article_url + "_loader"
+            loader.style.width = "30px";
+            loader.style.alignSelf = "center"
+            var loader_wheel = document.createElement("div");
+            loader_wheel.style.border = "2px solid rgba(30, 30, 30, 0.5)";
+            loader_wheel.style.borderLeft = "4px solid #000";
+            loader_wheel.style.borderRadius = "50%";
+            loader_wheel.style.height = "20px";
+            loader_wheel.style.marginBottom = "10px";
+            loader_wheel.style.width = "20px";
+            
+            loader.appendChild(loader_wheel);
+            div.appendChild(divider);
+            div.appendChild(loader);
             document.body.appendChild(div);
-            overlays.push(div);
+            document.getElementById(data.article_url + "_loader").animate([
+              { transform: 'rotate(0deg)' },
+              { transform: 'rotate(360deg)' }
+            ], {
+              duration: 1000,
+              iterations: Infinity
+            }
+            
+            );
+            getBias('http://localhost:5000/api/truepill/', post, 1)
+            .then(data => {
+              
+              if (data.suggested_articles !== undefined) {
+                // var articles = document.createElement("img");
+                // articles.style.maxWidth = "30%";
+                // articles.style.maxHeight = "30%";
+                var rem_load = document.getElementById(data.article_url + "_loader");
+                rem_load.remove();
+                div = document.getElementById(data.article_url)
+                div.style.height = height + 20 + 60 * data.suggested_articles.length + "px";
+                var suggested = document.createElement("div");
+                // var divider = document.createElement("hr");
+                // suggested.appendChild(articles);
+                suggested.innerHTML += "<p><b>Related Articles: </b> Similar articles from various news sources.</p>";
+                for (var i = 0; i < data.suggested_articles.length; i++) {
+                  var article = document.createElement("div");
+                  fontcolor = "gray";
+                  if (data.suggested_articles[i].bias == "LEFT" || data.suggested_articles[i].bias == "LEFT_CENTER") {
+                    fontcolor = "blue";
+                  }
+                  if (data.suggested_articles[i].bias == "RIGHT" || data.suggested_articles[i].bias == "RIGHT_CENTER") {
+                    fontcolor = "red";
+                  }
+                  if (data.suggested_articles[i].bias == "CENTER") {
+                    fontcolor = "purple";
+                  }
+                  article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + "</b></a></p>";
+                  article.innerHTML += "<p>Bias rating: " +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
+                  suggested.appendChild(article);
+                }
+                // div.appendChild(divider);
+                div.appendChild(suggested);
+              }
+              document.body.appendChild(div);
+              overlays.push(div);
+            });
           }
         });
       }, false);
@@ -196,7 +232,7 @@ function addObserverIfDesiredNodeAvailable() {
 
 addObserverIfDesiredNodeAvailable();
 
-function getBias(serv_url, post) {
+function getBias(serv_url, post, num_sugg) {
   var fb_url = null;
   Array.from(post.querySelectorAll('A')).every(link => {
     fb_url = link.getAttribute("href");
@@ -210,16 +246,21 @@ function getBias(serv_url, post) {
     alert("No article detected.")
     return false
   };
-  let data = {article_url: fb_url};
-  return fetch(serv_url, {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    //mode: 'no-cors',
-    method: "POST",
-    body: JSON.stringify(data)
-  }).then(res => res.json());
+  let data = {article_url: fb_url,
+  number_suggestions: num_sugg};
+
+    return fetch(serv_url, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'        
+      },
+      //mode: 'no-cors',
+      method: "POST",
+      body: JSON.stringify(data)
+    }).then(res => res.json());
+
+
+
 }
 
 function getDomain(url) {

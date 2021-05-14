@@ -2,6 +2,7 @@ import tldextract
 from pygooglenews import GoogleNews
 from datetime import timedelta
 from tinydb import Query
+from bias import Bias, get_bias
 
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -37,21 +38,43 @@ def google_news_search(article_url, keywords, date, num_suggestions, sources, da
     already_chosen = set()
     already_chosen.add(tldextract.extract(article_url).domain) # add original article domain to no pick from there again.
     if sources:
+        existing_bias = set()
+        print(len(entries), existing_bias)
         for entry in entries:
             entry_domain_name = tldextract.extract(entry.source['href']).domain
+            bias = get_bias(entry.link, bias_db)
+            print(entry_domain_name)
             if entry_domain_name in sources and entry_domain_name not in already_chosen:
                 already_chosen.add(entry_domain_name)
+                existing_bias.add(bias)
                 results.append(entry.link)
 
+    
     else: # if no sources given, just get first num_suggestion articles that have source in bias_db
         Media = Query()
+        existing_bias = set()
+        known_bias = set()
+        print(len(entries), existing_bias)
         for entry in entries:
             entry_domain_name = tldextract.extract(entry.source['href']).domain
-            if bias_db.search(Media.domain_name == entry_domain_name) and entry_domain_name not in already_chosen:
-                already_chosen.add(entry_domain_name)
-                results.append(entry.link)
-            if len(results) == num_suggestions:
-                break
+            if entry_domain_name not in already_chosen and entry_domain_name not in known_bias:
+                print(entry_domain_name)
+                bias = get_bias(entry.link, bias_db)
+                known_bias.add(entry_domain_name)
+                if bias_db.search(Media.domain_name == entry_domain_name) and bias not in existing_bias:
+                    existing_bias.add(bias)
+                    already_chosen.add(entry_domain_name)
+                    results.append(entry.link)
+                if len(results) == num_suggestions:
+                    break
+        if len(results) < num_suggestions:
+            for entry in entries:
+                entry_domain_name = tldextract.extract(entry.source['href']).domain
+                if entry_domain_name not in already_chosen and bias_db.search(Media.domain_name == entry_domain_name):
+                    already_chosen.add(entry_domain_name)
+                    results.append(entry.link)
+                if len(results) == num_suggestions:
+                    break
 
     return results
 

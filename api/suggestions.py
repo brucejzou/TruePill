@@ -36,6 +36,7 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     top_n_keywords = app_config['TOP_N_KEYWORDS']
     date_margin = app_config['DATE_MARGIN']
 
+
     article_text, article_date, article_url = get_article_text_and_date(article_url)
     # article_text = get_article_text(article_url)
     # article_date = articleDateExtractor.extractArticlePublishedDate(article_url)
@@ -44,8 +45,11 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
 
     # add biases
     suggested_articles = []
+    chosen_bias = []
+
     for article in related_articles:
         bias = get_bias(article, app_config['MEDIA_BIAS_DB'])
+        
         suggestion = {'bias': bias, 'article_url': article}
         suggested_articles.append(suggestion)
 
@@ -55,9 +59,9 @@ def get_article_text_and_date(article_url):
     g = Goose({'http_headers': get_random_header()})
     article = g.extract(url=article_url)
     title = article.title
-    body = clean(article.cleaned_text, no_line_breaks=True, no_punct=True)
+    body = clean(article.cleaned_text, extra_spaces=True, punct=True)
     date = parser.parse(article.publish_date)
-    text = clean(title, no_punct=True) + body
+    text = clean(title, punct=True) + body
 
     return text, date, article.canonical_link
 
@@ -129,9 +133,11 @@ def get_related_articles(article_url, article_keywords, article_date, num_sugges
     if trusted_sources:
         if num_suggestions > len(trusted_sources): # wants more suggestions than trusted sources, just return from all sources
             num_suggestions = len(trusted_sources)
+        
         chosen_sources = random.sample(trusted_sources, num_suggestions) # randomly choose some sources
 
     selected_keywords = article_keywords[:top_n_keywords] # Get the top_n_keywords to search with
     related_articles = google_news_search(article_url, selected_keywords, article_date, num_suggestions, chosen_sources, date_margin, bias_db)
+    # related_articles = google_news_search(article_url, selected_keywords, article_date, num_suggestions, None, date_margin, bias_db)
 
     return related_articles
