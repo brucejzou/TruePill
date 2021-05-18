@@ -40,8 +40,8 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     url_match_threshold = app_config['URL_MATCH_THRESHOLD']
 
     article_text, article_date, article_url = get_article_text_and_date(article_url)
-    
-    if not url_words_match_text(article_url, article_text, url_match_threshold): 
+
+    if not url_words_match_text(article_url, article_text, url_match_threshold):
         gc_article_text, gc_article_date, gc_article_url = get_article_text_and_date(get_google_cache_url(article_url))
         if "error 404" not in gc_article_text.lower():
             article_text, article_date, article_url = gc_article_text, gc_article_date, gc_article_url
