@@ -39,6 +39,7 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
     date_margin = app_config['DATE_MARGIN']
     url_match_threshold = app_config['URL_MATCH_THRESHOLD']
 
+
     article_text, article_date, article_url = get_article_text_and_date(article_url)
 
     if not url_words_match_text(article_url, article_text, url_match_threshold):
@@ -53,6 +54,8 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
 
     # add biases
     suggested_articles = []
+    chosen_bias = []
+
     for article in related_articles:
         bias = get_bias(article[1], app_config['MEDIA_BIAS_DB'])
         suggestion = {'bias': bias, 'article_url': article[1], 'article_title': article[0]}
@@ -151,9 +154,11 @@ def get_related_articles(article_url, article_keywords, article_date, num_sugges
     if trusted_sources:
         if num_suggestions > len(trusted_sources): # wants more suggestions than trusted sources, just return from all sources
             num_suggestions = len(trusted_sources)
+
         chosen_sources = random.sample(trusted_sources, num_suggestions) # randomly choose some sources
 
     selected_keywords = article_keywords[:top_n_keywords] # Get the top_n_keywords to search with
     related_articles = google_news_search(article_url, selected_keywords, article_date, num_suggestions, chosen_sources, date_margin, bias_db)
+    # related_articles = google_news_search(article_url, selected_keywords, article_date, num_suggestions, None, date_margin, bias_db)
 
     return related_articles

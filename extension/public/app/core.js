@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-undef */
 // var current_url;
 // var overlays = [];
 //
@@ -59,13 +61,11 @@
 //   }).then(res => res.json());
 // }
 
-
-var overlays = [];
-var height = 60;
+var height = 80;
 var observer = new MutationObserver(function(mutations) {
   var posts = document.querySelectorAll('[data-pagelet^="FeedUnit_"]');
   if (posts.length == 0) {
-    console.log("big booty bitches");
+    //console.log("big booty bitches");
     var overall = document.querySelectorAll('[class="k4urcfbm"]');
     while (overall.length < 3) {
       window.setTimeout(null,50);
@@ -73,6 +73,16 @@ var observer = new MutationObserver(function(mutations) {
     }
     posts = overall[f.length - 1].childNodes;
   }
+  // var posts = document.querySelectorAll('[aria-label="Timeine: Your Home Timeline"]');
+  // if (posts.length == 0) {
+  //   //console.log("big booty bitches");
+  //   var overall = document.querySelectorAll('[role="article"]');
+  //   while (overall.length < 3) {
+  //     window.setTimeout(null,50);
+  //     overall = document.querySelectorAll('[role="article"]');
+  //   }
+  //   posts = overall[f.length - 1].childNodes;
+  // }
   console.log(posts)
   posts.forEach(post => {
     var menu = post.querySelector('[aria-haspopup="menu"]');
@@ -86,13 +96,18 @@ var observer = new MutationObserver(function(mutations) {
       elem.setAttribute("class", "true_img");
       menu.parentElement.parentElement.appendChild(elem);
       elem.addEventListener("click", function(e) {
-        getBias('http://localhost:5000/api/truepill/', post)
+        getBias('http://localhost:5000/api/truepill/', post, 0)
         .then(data => {
           console.log("Request complete! response:", data);
-          if (data.bias !== undefined) {
+          if (document.getElementById(data.article_url) != null) {
+            document.getElementById(data.article_url).remove();
+          }
+          else if (data.bias !== undefined) {
             console.log(data.article_url);
             var div = document.createElement("div");
+            div.id = (data.article_url)
             div.style.width = "360px";
+            div.style.alignItems = "center";
             div.style.height = height + "px";
             div.style.background = "rgba(256, 256, 256, 1)";
             div.style.padding = "15px";
@@ -129,14 +144,25 @@ var observer = new MutationObserver(function(mutations) {
             header.appendChild(headerleft);
 
             var fontcolor = "gray";
-            if (data.bias == "LEFT" || data.bias == "LEFT_CENTER") {
+            var marginunit = 0;
+            if (data.bias == "LEFT") {
               fontcolor = "blue";
             }
-            if (data.bias == "RIGHT" || data.bias == "RIGHT_CENTER") {
+            if (data.bias == "LEFT_CENTER") {
+              fontcolor = "blue";
+              marginunit = 63;
+            }
+            if (data.bias == "RIGHT") {
               fontcolor = "red";
+              marginunit = 253;
+            }
+            if (data.bias == "RIGHT_CENTER") {
+              fontcolor = "red";
+              marginunit = 189;
             }
             if (data.bias == "CENTER") {
               fontcolor = "purple";
+              marginunit = 126;
             }
             var bias = document.createElement("div");
             bias.style.textAlign = "left";
@@ -145,8 +171,37 @@ var observer = new MutationObserver(function(mutations) {
             var bar = document.createElement("img");
             bar.src = chrome.extension.getURL("assets/bar.png");
             headerright.appendChild(bar);
+            var pointer = document.createElement("img");
+            pointer.src = chrome.extension.getURL("assets/pointer.png");
+            pointer.style.marginLeft = marginunit + "px";
+            pointer.style.height = "10px";
+            pointer.style.width = "10px";
+            headerright.appendChild(pointer);
             header.appendChild(headerright);
             div.appendChild(header);
+
+            var loader = document.createElement("div");
+            loader.id = data.article_url + "_loader"
+            loader.style.width = "30px";
+            loader.style.alignSelf = "center";
+            loader.style.justifyContent = "center";
+            loader.style.margin = "20px"
+            loader.style.marginLeft = "145px";
+
+            var loader_wheel = document.createElement("div");
+            loader_wheel.style.border = "2px solid rgba(30, 30, 30, 0.5)";
+            loader_wheel.style.borderLeft = "4px solid #000";
+            loader_wheel.style.borderRadius = "50%";
+            loader_wheel.style.height = "20px";
+            loader_wheel.style.marginBottom = "10px";
+            loader_wheel.style.width = "20px";
+
+            loader.appendChild(loader_wheel);
+            div.style.height = height + 60 + "px";
+            var divider = document.createElement("hr");
+            div.appendChild(divider);
+            div.appendChild(loader);
+            document.body.appendChild(div);
 
             var footer = document.createElement("div");
             footer.style.display = "flex";
@@ -164,47 +219,64 @@ var observer = new MutationObserver(function(mutations) {
             footerright.style.textAlign = "left";
             footerright.style.lineHeight = "30%";
 
-            scale.style.maxWidth = "100%";
-            scale.style.maxHeight = "100%";
+            document.getElementById(data.article_url + "_loader").animate([
+              { transform: 'rotate(0deg)' },
+              { transform: 'rotate(360deg)' }
+            ], {
+              duration: 1000,
+              iterations: Infinity
+            });
 
-            if (data.suggested_articles !== undefined) {
-              var articles = document.createElement("img");
-              articles.src = chrome.extension.getURL("assets/application.png");
-              articles.style.maxWidth = "100%";
-              articles.style.maxHeight = "100%";
-              footerleft.appendChild(articles);
-              footer.appendChild(footerleft);
+            getBias('http://localhost:5000/api/truepill/', post, 1)
+            .then(data => {
+              if (data.suggested_articles !== undefined) {
+                div.style.height = height + 60 + 72 * data.suggested_articles.length + "px";
+                var rem_load = document.getElementById(data.article_url + "_loader");
+                rem_load.remove();
+                var div_load = document.getElementById(data.article_url);
+                div_load.remove();
 
-              div.style.height = height + 60 + 75 * data.suggested_articles.length + "px";
-              var divider = document.createElement("hr");
+                var articles = document.createElement("img");
+                articles.src = chrome.extension.getURL("assets/application.png");
+                articles.style.maxWidth = "100%";
+                articles.style.maxHeight = "100%";
+                footerleft.appendChild(articles);
+                footer.appendChild(footerleft);
 
-              footerright.innerHTML += "<p style=\"font-size:20px\"><b>Related Articles </b></p>";
-              footerright.innerHTML += "<p>Similar articles from various news sources.".fontcolor("gray")+"</p><br><br>";
-              for (var i = 0; i < data.suggested_articles.length; i++) {
-                var article = document.createElement("div");
-                article.style.lineHeight = "100%";
-                fontcolor = "gray";
-                if (data.suggested_articles[i].bias == "LEFT" || data.suggested_articles[i].bias == "LEFT_CENTER") {
-                  fontcolor = "blue";
+                footerright.innerHTML += "<p style=\"font-size:20px\"><b>Related Articles </b></p>";
+                footerright.innerHTML += "<p>Similar articles from various news sources.".fontcolor("gray")+"</p><br><br>";
+                if (data.suggested_articles.length == 0) {
+                  div.style.height = height + 85 + "px";
+                  var article = document.createElement("div");
+                  article.style.lineHeight = "100%";
+                  fontcolor = "gray";
+                  article.innerHTML += "<p>"+ "No related articles could be found".fontcolor("gray") + "</p>";
+                  footerright.appendChild(article);
                 }
-                if (data.suggested_articles[i].bias == "RIGHT" || data.suggested_articles[i].bias == "RIGHT_CENTER") {
-                  fontcolor = "red";
+                for (var i = 0; i < data.suggested_articles.length; i++) {
+                  var article = document.createElement("div");
+                  article.style.lineHeight = "100%";
+                  fontcolor = "gray";
+                  if (data.suggested_articles[i].bias == "LEFT" || data.suggested_articles[i].bias == "LEFT_CENTER") {
+                    fontcolor = "blue";
+                  }
+                  if (data.suggested_articles[i].bias == "RIGHT" || data.suggested_articles[i].bias == "RIGHT_CENTER") {
+                    fontcolor = "red";
+                  }
+                  if (data.suggested_articles[i].bias == "CENTER") {
+                    fontcolor = "purple";
+                  }
+                  article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + ": </b>" + data.suggested_articles[i].article_title + "</a></p>";
+                  article.innerHTML += "<p>"+ "Bias rating: ".fontcolor("gray") +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
+                  footerright.appendChild(article);
                 }
-                if (data.suggested_articles[i].bias == "CENTER") {
-                  fontcolor = "purple";
-                }
-                article.innerHTML += "<p><a href =\"" + data.suggested_articles[i].article_url + "\"><b>" + getDomain(data.suggested_articles[i].article_url).toUpperCase() + ": </b>" + data.suggested_articles[i].article_title + "</a></p>";
-                article.innerHTML += "<p>"+ "Bias rating: ".fontcolor("gray") +  data.suggested_articles[i].bias.fontcolor(fontcolor).replace("_", " ") + "</p>";
-                footerright.appendChild(article);
+                footer.appendChild(footerright);
+                div.appendChild(footer);
               }
-              footer.appendChild(footerright);
-              div.appendChild(divider);
-              div.appendChild(footer);
-            }
-            document.body.appendChild(div);
-            overlays.push(div);
-          }
-        });
+              document.body.appendChild(div);
+          })
+        }
+      });
       }, false);
       //elem.onclick = function() { getBias('http://localhost:5000/api/truepill/', post); }
     }
@@ -229,7 +301,7 @@ function addObserverIfDesiredNodeAvailable() {
 
 addObserverIfDesiredNodeAvailable();
 
-function getBias(serv_url, post) {
+function getBias(serv_url, post, num_sugg) {
   var fb_url = null;
   Array.from(post.querySelectorAll('A')).every(link => {
     fb_url = link.getAttribute("href");
@@ -243,16 +315,21 @@ function getBias(serv_url, post) {
     alert("No article detected.")
     return false
   };
-  let data = {article_url: fb_url};
-  return fetch(serv_url, {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    //mode: 'no-cors',
-    method: "POST",
-    body: JSON.stringify(data)
-  }).then(res => res.json());
+  let data = {article_url: fb_url,
+  number_suggestions: num_sugg};
+
+    return fetch(serv_url, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      //mode: 'no-cors',
+      method: "POST",
+      body: JSON.stringify(data)
+    }).then(res => res.json());
+
+
+
 }
 
 function getDomain(url) {
@@ -271,4 +348,5 @@ function getDomain(url) {
 // credit for scale
 //<div>Icons made by <a href="" title="Kiranshastry">Kiranshastry</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 // credit for Articles
+//<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 //<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

@@ -14,22 +14,31 @@ app.config['MEDIA_BIAS_DB'] = TinyDB(app.config['BIAS_DB_PATH'])
 
 @app.route('/api/truepill/', methods=['POST'])
 def process_url():
+    print(request.json)
     if not request.json or not 'article_url' in request.json:
         print(request.json)
         abort(500)
 
     article_url = request.json['article_url']
-    num_suggestions = request.json.get('number_suggestions', app.config['NUM_SUGGESTIONS'])
+    print("ji")
+    num_suggestions = request.json['number_suggestions']
+    print(num_suggestions)
     if is_facebook_url(article_url):
         article_url = extract_fb_url(article_url)
     bias = get_bias(article_url, app.config['MEDIA_BIAS_DB'])
-    suggested_articles = get_suggested_articles(article_url, num_suggestions, app.config)
+    if (num_suggestions > 0):
+        suggested_articles = get_suggested_articles(article_url, app.config['NUM_SUGGESTIONS'], app.config)
 
-    response = {
-        'article_url': article_url,
-        'bias': bias,
-        'suggested_articles': suggested_articles
-    }
+        response = {
+            'article_url': article_url,
+            'bias': bias,
+            'suggested_articles': suggested_articles
+        }
+    else:
+        response = {
+            'article_url': article_url,
+            'bias': bias
+        }
 
     return jsonify(response), 200
 
