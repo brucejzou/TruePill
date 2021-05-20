@@ -25,6 +25,12 @@
       "js": ["app/core.js"],
       "run_at": "document_end",
       "all_frames": true
+    },
+    {
+      "matches": ["http://www.twitter.com/*","https://twitter.com/*"],
+      "js": ["app/core2.js"],
+      "run_at": "document_end",
+      "all_frames": true
     }
   ],
   "content_security_policy": "script-src 'self' 'sha256-FG8zi7STkge9lwv9cS3ghTuCsHvQm+2fo4t9CV6JYtY='; object-src 'self'",
@@ -32,6 +38,8 @@
     "webRequest",
     "tabs",
     "https://www.facebook.com/*",
+    "http://twitter.com/",
+    "https://twitter.com/",
     "http://localhost:5000/*"
   ]
 }
