@@ -2,6 +2,7 @@ import urllib.parse
 import tldextract
 from src.make_requests import make_request
 import re
+import requests
 
 def get_base_url(article_url):
     """
@@ -31,6 +32,14 @@ def extract_fb_url(fb_url):
     """
     fb_url = fb_url[fb_url.index('l.php?u=') + 8: len(fb_url)]
     return urllib.parse.unquote(fb_url)
+
+def is_twitter_url(url):
+    u = urllib.parse.urlparse(url)
+    return u.netloc == 't.co'
+
+def extract_twitter_url(tw_url):
+    r = requests.get(tw_url)
+    return r.url
 
 def get_url_words(url):
     u = urllib.parse.urlparse(url)
