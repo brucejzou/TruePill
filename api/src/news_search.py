@@ -2,7 +2,7 @@ import tldextract
 from pygooglenews import GoogleNews
 from datetime import timedelta
 from tinydb import Query
-from bias import Bias, get_bias
+from src.bias import Bias, get_bias
 
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -39,11 +39,9 @@ def google_news_search(article_url, keywords, date, num_suggestions, sources, da
     already_chosen.add(tldextract.extract(article_url).domain) # add original article domain to no pick from there again.
     if sources:
         existing_bias = set()
-        print(len(entries), existing_bias)
         for entry in entries:
             entry_domain_name = tldextract.extract(entry.source['href']).domain
             bias = get_bias(entry.link, bias_db)
-            print(entry_domain_name)
             if entry_domain_name in sources and entry_domain_name not in already_chosen:
                 already_chosen.add(entry_domain_name)
                 results.append((entry.title, entry.link))
@@ -53,7 +51,6 @@ def google_news_search(article_url, keywords, date, num_suggestions, sources, da
         Media = Query()
         existing_bias = set()
         known_bias = set()
-        print(len(entries), existing_bias)
         for entry in entries:
             entry_domain_name = tldextract.extract(entry.source['href']).domain
             if bias_db.search(Media.domain_name == entry_domain_name) and entry_domain_name not in already_chosen:
@@ -95,3 +92,6 @@ def get_date_range(date, margin):
     start_date = date - time_delta
     end_date = date + time_delta
     return start_date.strftime(DATE_FORMAT), end_date.strftime(DATE_FORMAT)
+
+def dummy_func():
+    print("dummy thicc")

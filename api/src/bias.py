@@ -2,7 +2,7 @@ import urllib.parse
 import tldextract
 from enum import Enum
 from tinydb import Query
-from url_helpers import get_base_url
+from src.url_helpers import get_base_url
 
 class Bias(Enum):
     LEFT = 1
