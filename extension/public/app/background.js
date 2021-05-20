@@ -37,7 +37,8 @@ function getName(name) {
   const tabStorage = {};
   const networkFilters = {
       urls: [
-          "https://www.facebook.com/*"
+          "https://www.facebook.com/*",
+          "https://www.twitter.com/*"
       ]
   };
 
@@ -64,7 +65,7 @@ function getName(name) {
       }
 
       const request = tabStorage[tabId].requests[requestId];
-      var re = new RegExp("https://www.facebook.com/$")
+      //var re = new RegExp("https://www.facebook.com/$")
       console.log(details.url)
     //   if (re.test(details.url)) {
     //       getName("True Pill");
