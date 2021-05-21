@@ -60,8 +60,7 @@
 // }
 
 
-var overlays = [];
-var height = 60;
+var height = 80;
 var observer = new MutationObserver(function(mutations) {
   var posts = document.querySelectorAll('[data-pagelet^="FeedUnit_"]');
   if (posts.length == 0) {
