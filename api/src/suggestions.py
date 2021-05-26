@@ -13,15 +13,6 @@ from rake_nltk import Metric, Rake
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 
-# TEXT_LENGTH_FILTER = 80
-# HTML_BLACKLIST = [
-#     'style',
-#     'script',
-#     'head',
-#     'title',
-#     'meta',
-#     '[document]'
-# ]
 GOOGLE_CACHE_BASE_URL = "https://webcache.googleusercontent.com/search?q=cache:"
 
 def get_suggested_articles(article_url, num_suggestions, app_config):
@@ -47,8 +38,6 @@ def get_suggested_articles(article_url, num_suggestions, app_config):
         if "error 404" not in gc_article_text.lower():
             article_text, article_date, article_url = gc_article_text, gc_article_date, gc_article_url
 
-    # article_text = get_article_text(article_url)
-    # article_date = articleDateExtractor.extractArticlePublishedDate(article_url)
     article_keywords = get_article_keywords(article_text)
     related_articles = get_related_articles(article_url, article_keywords, article_date, num_suggestions, trusted_sources, top_n_keywords, date_margin, app_config['MEDIA_BIAS_DB'])
 
@@ -85,39 +74,6 @@ def get_article_text_and_date(article_url):
     text = clean(title, no_punct=True) + body
 
     return text, date, article.canonical_link
-
-# def tag_visible(element):
-#     if element.parent.name in HTML_BLACKLIST:
-#         return False
-#     if isinstance(element, Comment):
-#         return False
-#     return True
-
-# def tag_length_filter(element):
-#     if len(str(element)) < TEXT_LENGTH_FILTER:
-#         return False
-#     return True
-
-# def get_article_text(article_url):
-#     """
-#     Gets the article text from the given article url as a string.
-
-#     Arguments
-#     ----------
-#     article_url: (string), the url of the original article.
-#     """
-#     result = make_request(article_url)
-
-#     if result.status_code == 200:
-#         content = result.content
-#         soup = BeautifulSoup(content, features='html.parser')
-#         texts = soup.find_all(text=True)
-#         visible_texts = filter(tag_visible, texts)
-#         visible_texts_long = filter(tag_length_filter, visible_texts)
-#         article_text = ' '.join(t.strip() for t in visible_texts_long)
-#         article_text = ''.join(filter(lambda x: x in string.printable, article_text)) # remove weird characters like the fancy quotes
-#         article_text = article_text.translate(str.maketrans('', '', string.punctuation)) # remove punctuation
-#         return article_text
 
 def get_article_keywords(article_text):
     """
@@ -159,6 +115,5 @@ def get_related_articles(article_url, article_keywords, article_date, num_sugges
 
     selected_keywords = article_keywords[:top_n_keywords] # Get the top_n_keywords to search with
     related_articles = google_news_search(article_url, selected_keywords, article_date, num_suggestions, chosen_sources, date_margin, bias_db)
-    # related_articles = google_news_search(article_url, selected_keywords, article_date, num_suggestions, None, date_margin, bias_db)
 
     return related_articles

@@ -1,64 +1,4 @@
-// var current_url;
-// var overlays = [];
-//
-// document.addEventListener('mousemove', function (e) {
-//   if(typeof movewait != 'undefined'){
-//     clearTimeout(movewait);
-//   }
-//   movewait = setTimeout(function(){
-//     var srcElement = e.srcElement;
-//     while (srcElement != null && srcElement.getAttribute("data-pagelet") != 'FeedUnit_1') {
-//       //var rect = srcElement.getBoundingClientRect();
-//       if (srcElement.nodeName == 'A') {
-//         var url = srcElement.getAttribute("href");
-//         if (current_url == url) {
-//           return;
-//         }
-//         if (overlays.length != 0) {
-//           document.body.removeChild(overlays[0]);
-//           overlays.pop();
-//         }
-//         current_url = url;
-//         if (url != null && url.substring(0,25).valueOf() != "https://www.facebook.com/".valueOf()) {
-//           let data = {article_url : url};
-//           getBias('http://localhost:5000/api/truepill/', data)
-//           .then(data => {
-//             //console.log("Request complete! response:", data);
-//             if (data.bias !== undefined) {
-//               var div = document.createElement("div");
-//               div.style.width = "80px";
-//               div.style.height = "80px";
-//               div.style.background = "rgba(256, 256, 256, 0.7)";
-//               div.style.padding = "40px";
-//               div.style.textAlign = "center";
-//               div.innerHTML = "The bias of this article is " + data.bias;
-//               div.style.position = "absolute";
-//               div.style.left = e.pageX+'px';
-//               div.style.top = e.pageY+'px';
-//               div.style.z = 100;
-//               document.body.appendChild(div);
-//               overlays.push(div);
-//             }
-//           });
-//           break;
-//         }
-//       }
-//       srcElement = srcElement.parentNode;
-//     }
-//   },200);
-// }, false);
-//
-// function getBias(url, data) {
-//   return fetch(url, {
-//     headers: {
-//       'Accept': 'application/json',
-//       'Content-Type': 'application/json'
-//     },
-//     method: "POST",
-//     body: JSON.stringify(data)
-//   }).then(res => res.json());
-// }
-
+const API_URL = "https://truepill.herokuapp.com/api/truepill/"
 
 var height = 80;
 var observer = new MutationObserver(function(mutations) {
@@ -85,7 +25,7 @@ var observer = new MutationObserver(function(mutations) {
       elem.setAttribute("class", "true_img");
       menu.parentElement.parentElement.appendChild(elem);
       elem.addEventListener("click", function(e) {
-        getBias('http://localhost:5000/api/truepill/', post, 0)
+        getBias(API_URL, post, 0)
         .then(data => {
           console.log("Request complete! response:", data);
           if (document.getElementById(data.article_url) != null) {
@@ -216,7 +156,7 @@ var observer = new MutationObserver(function(mutations) {
               iterations: Infinity
             });
 
-            getBias('http://localhost:5000/api/truepill/', post, 1)
+            getBias(API_URL, post, 1)
             .then(data => {
               if (data.suggested_articles !== undefined) {
                 div.style.height = height + 60 + 72 * data.suggested_articles.length + "px";
@@ -267,7 +207,7 @@ var observer = new MutationObserver(function(mutations) {
           }
         });
       }, false);
-      //elem.onclick = function() { getBias('http://localhost:5000/api/truepill/', post); }
+      //elem.onclick = function() { getBias(API_URL, post); }
     }
   });
 });

@@ -40,6 +40,6 @@
     "https://www.facebook.com/*",
     "http://twitter.com/",
     "https://twitter.com/",
-    "http://localhost:5000/*"
+    "https://truepill.herokuapp.com/*"
   ]
 }
