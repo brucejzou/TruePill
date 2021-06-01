@@ -23,6 +23,12 @@ The server will run locally at http://127.0.0.1:5000/
 ## Creating Media Bias database
 Run `python create_bias_db.py` to create a tinyDB database at `'media_bias_db.json'`.
 
+### Running tests
+```
+pytest -v
+```
+Run the above command in the api folder.
+
 
 ## Example output from server:
 ```
