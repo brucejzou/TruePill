@@ -1,4 +1,5 @@
-console.log("Extension running");
+const API_URL = "https://truepill.herokuapp.com/api/truepill/"
+
 var height = 80;
 var observer = new MutationObserver(function(mutations) {
   var posts = Array.from(document.querySelector('[aria-label="Timeline: Your Home Timeline"]').children[0].children);
@@ -16,7 +17,7 @@ var observer = new MutationObserver(function(mutations) {
       menu.parentElement.parentElement.appendChild(elem);
       elem.addEventListener("click", function(e) {
         e.stopPropagation();
-        getBias('http://localhost:5000/api/truepill/', post, 0)
+        getBias(API_URL, post, 0)
         .then(data => {
           console.log("Request complete! response:", data);
           if (document.getElementById(data.article_url) != null) {
@@ -147,7 +148,7 @@ var observer = new MutationObserver(function(mutations) {
               iterations: Infinity
             });
 
-            getBias('http://localhost:5000/api/truepill/', post, 1)
+            getBias(API_URL, post, 1)
             .then(data => {
               if (data.suggested_articles !== undefined) {
                 div.style.height = height + 60 + 72 * data.suggested_articles.length + "px";
@@ -198,7 +199,7 @@ var observer = new MutationObserver(function(mutations) {
         }
       });
       }, false);
-      //elem.onclick = function() { getBias('http://localhost:5000/api/truepill/', post); }
+      //elem.onclick = function() { getBias(API_URL, post); }
     }
   });
 });
