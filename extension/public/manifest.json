@@ -37,6 +37,7 @@
   "permissions": [
     "webRequest",
     "tabs",
+    "http://localhost:5000/api/truepill/",
     "https://www.facebook.com/*",
     "http://twitter.com/",
     "https://twitter.com/",

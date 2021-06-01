@@ -1,4 +1,4 @@
-const API_URL = "https://truepill.herokuapp.com/api/truepill/"
+const API_URL = "https://truepill.herokuapp.com/api/truepill/";
 
 var height = 80;
 var observer = new MutationObserver(function(mutations) {
@@ -230,7 +230,7 @@ function addObserverIfDesiredNodeAvailable() {
 
 addObserverIfDesiredNodeAvailable();
 
-function getBias(serv_url, post) {
+function getBias(serv_url, post, num_sugg) {
   var fb_url = null;
   Array.from(post.querySelectorAll('A')).every(link => {
     fb_url = link.getAttribute("href");
@@ -244,17 +244,47 @@ function getBias(serv_url, post) {
     alert("No article detected.")
     return false
   };
-  let data = {article_url: fb_url};
-  return fetch(serv_url, {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    //mode: 'no-cors',
-    method: "POST",
-    body: JSON.stringify(data)
-  }).then(res => res.json());
+  let data = {article_url: fb_url,
+  number_suggestions: num_sugg};
+
+    return fetch(serv_url, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'        
+      },
+      //mode: 'no-cors',
+      method: "POST",
+      body: JSON.stringify(data)
+    }).then(res => res.json());
+
+
+
 }
+// function getBias(serv_url, post) {
+//   var fb_url = null;
+//   Array.from(post.querySelectorAll('A')).every(link => {
+//     fb_url = link.getAttribute("href");
+//     if (fb_url != null && fb_url.substring(0, 4).valueOf() == "http".valueOf() && fb_url.substring(0, 25).valueOf() != "https://www.facebook.com/".valueOf()) {
+//       return false;
+//     };
+//     fb_url = null;
+//     return true;
+//   });
+//   if ( fb_url == null ) {
+//     alert("No article detected.")
+//     return false
+//   };
+//   let data = {article_url: fb_url};
+//   return fetch(serv_url, {
+//     headers: {
+//       'Accept': 'application/json',
+//       'Content-Type': 'application/json'
+//     },
+//     // mode: 'no-cors',
+//     method: "POST",
+//     body: JSON.stringify(data)
+//   }).then(res => res.json());
+// }
 
 function getDomain(url) {
     var match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);

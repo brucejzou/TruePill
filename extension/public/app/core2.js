@@ -1,4 +1,4 @@
-const API_URL = "https://truepill.herokuapp.com/api/truepill/"
+const API_URL = "https://truepill.herokuapp.com/api/truepill/";
 
 var height = 80;
 var observer = new MutationObserver(function(mutations) {
@@ -151,7 +151,7 @@ var observer = new MutationObserver(function(mutations) {
             getBias(API_URL, post, 1)
             .then(data => {
               if (data.suggested_articles !== undefined) {
-                div.style.height = height + 60 + 72 * data.suggested_articles.length + "px";
+                div.style.height = height + 70 + 88 * data.suggested_articles.length + "px";
                 var rem_load = document.getElementById(data.article_url + "_loader");
                 rem_load.remove();
                 var div_load = document.getElementById(data.article_url);
